@@ -158,6 +158,160 @@
 
 // export const useGlobalContext = () => useContext(GlobalContext);
 // src/context/GlobalContext.js
+// import React, { createContext, useContext, useEffect, useState } from "react";
+// import axiosInstance from "../axios";
+
+// const GlobalContext = createContext();
+
+// export const GlobalProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+//   const [token, setToken] = useState(localStorage.getItem("token") || "");
+//   const [incomes, setIncomes] = useState([]);
+//   const [expenses, setExpenses] = useState([]);
+//   const [error, setError] = useState(null);
+
+//   // REGISTER
+// const registerUser = async (userData) => {
+//   try {
+//     const res = await axiosInstance.post("/register", userData);
+//     const token = res.data.token;
+
+//     localStorage.setItem("token", token);
+//     setToken(token);
+//     await getProfile(); // optional: fetch profile immediately
+
+//     return true; // ✅ success flag
+//   } catch (err) {
+//     setError(err.response?.data?.message || "Registration failed");
+//     return false; // ✅ failure flag
+//   }
+// };
+
+
+//   const loginUser = async (userData) => {
+//     try {
+//       const res = await axiosInstance.post("/login", userData);
+//       const token = res.data.token;
+//       localStorage.setItem("token", token);
+//       setToken(token);
+//       return true;
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Login failed");
+//       return false;
+//     }
+//   };
+
+//   const getProfile = async () => {
+//     try {
+//       const res = await axiosInstance.get("/profile");
+//       setUser(res.data.user);
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to fetch profile");
+//     }
+//   };
+
+//   const getIncomes = async () => {
+//     try {
+//       const res = await axiosInstance.get("/get-incomes");
+//       setIncomes(res.data.data);
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to fetch incomes");
+//     }
+//   };
+
+//   const getExpenses = async () => {
+//     try {
+//       const res = await axiosInstance.get("/get-expenses");
+//       setExpenses(res.data.data);
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to fetch expenses");
+//     }
+//   };
+
+//   const addIncome = async (incomeData) => {
+//     try {
+//       await axiosInstance.post("/add-income", {
+//         ...incomeData,
+//         user: user._id,
+//       });
+//       getIncomes();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to add income");
+//     }
+//   };
+
+//   const addExpense = async (expenseData) => {
+//     try {
+//       await axiosInstance.post("/add-expense", {
+//         ...expenseData,
+//         user: user._id,
+//       });
+//       getExpenses();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to add expense");
+//     }
+//   };
+
+//   const deleteIncome = async (id) => {
+//     try {
+//       await axiosInstance.delete(`/delete-income/${id}`);
+//       getIncomes();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to delete income");
+//     }
+//   };
+
+//   const deleteExpense = async (id) => {
+//     try {
+//       await axiosInstance.delete(`/delete-expense/${id}`);
+//       getExpenses();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to delete expense");
+//     }
+//   };
+
+//   const totalIncome = incomes.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+//   const totalExpenses = expenses.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+//   const totalBalance = totalIncome - totalExpenses;
+
+//   const clearError = () => setError(null);
+
+//   useEffect(() => {
+//     if (token) {
+//       getProfile();
+//       getIncomes();
+//       getExpenses();
+//     }
+//   }, [token]);
+
+//   return (
+//     <GlobalContext.Provider
+//       value={{
+//         user,
+//         token,
+//         incomes,
+//         expenses,
+//         error,
+//         registerUser,
+//         loginUser,
+//         addIncome,
+//         getIncomes,
+//         deleteIncome,
+//         addExpense,
+//         getExpenses,
+//         deleteExpense,
+//         clearError,
+//         totalIncome,
+//         totalExpenses,
+//         totalBalance,
+//       }}
+//     >
+//       {children}
+//     </GlobalContext.Provider>
+//   );
+// };
+
+// export const useGlobalContext = () => useContext(GlobalContext);
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../axios";
 
@@ -170,43 +324,50 @@ export const GlobalProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState(null);
 
-  // REGISTER
-const registerUser = async (userData) => {
-  try {
-    const res = await axiosInstance.post("/register", userData);
-    const token = res.data.token;
+  // ✅ REGISTER
+  const registerUser = async (userData) => {
+    try {
+      const res = await axiosInstance.post("/register", userData);
+      const token = res.data.token;
+      localStorage.setItem("token", token);
+      setToken(token);
+      await getProfile();
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
+    }
+  };
 
-    localStorage.setItem("token", token);
-    setToken(token);
-    await getProfile(); // optional: fetch profile immediately
-
-    return true; // ✅ success flag
-  } catch (err) {
-    setError(err.response?.data?.message || "Registration failed");
-    return false; // ✅ failure flag
-  }
-};
-
-
+  // ✅ LOGIN
   const loginUser = async (userData) => {
     try {
       const res = await axiosInstance.post("/login", userData);
       const token = res.data.token;
       localStorage.setItem("token", token);
       setToken(token);
-      return true;
+      await getProfile();
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
-      return false;
     }
   };
 
+  // ✅ GET PROFILE
   const getProfile = async () => {
     try {
       const res = await axiosInstance.get("/profile");
       setUser(res.data.user);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch profile");
+    }
+  };
+
+  // ✅ INCOMES
+  const addIncome = async (incomeData) => {
+    try {
+      if (!user?._id) throw new Error("User not found");
+      await axiosInstance.post("/add-income", { ...incomeData, user: user._id });
+      getIncomes();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to add income");
     }
   };
 
@@ -219,45 +380,32 @@ const registerUser = async (userData) => {
     }
   };
 
-  const getExpenses = async () => {
-    try {
-      const res = await axiosInstance.get("/get-expenses");
-      setExpenses(res.data.data);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch expenses");
-    }
-  };
-
-  const addIncome = async (incomeData) => {
-    try {
-      await axiosInstance.post("/add-income", {
-        ...incomeData,
-        user: user._id,
-      });
-      getIncomes();
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to add income");
-    }
-  };
-
-  const addExpense = async (expenseData) => {
-    try {
-      await axiosInstance.post("/add-expense", {
-        ...expenseData,
-        user: user._id,
-      });
-      getExpenses();
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to add expense");
-    }
-  };
-
   const deleteIncome = async (id) => {
     try {
       await axiosInstance.delete(`/delete-income/${id}`);
       getIncomes();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete income");
+    }
+  };
+
+  // ✅ EXPENSES
+  const addExpense = async (expenseData) => {
+    try {
+      if (!user?._id) throw new Error("User not found");
+      await axiosInstance.post("/add-expense", { ...expenseData, user: user._id });
+      getExpenses();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to add expense");
+    }
+  };
+
+  const getExpenses = async () => {
+    try {
+      const res = await axiosInstance.get("/get-expenses");
+      setExpenses(res.data.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch expenses");
     }
   };
 
@@ -270,12 +418,15 @@ const registerUser = async (userData) => {
     }
   };
 
+  // ✅ CALCULATE TOTALS
   const totalIncome = incomes.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
   const totalExpenses = expenses.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
   const totalBalance = totalIncome - totalExpenses;
 
+  // ✅ CLEAR ERRORS
   const clearError = () => setError(null);
 
+  // ✅ AUTO FETCH on first load (if token exists)
   useEffect(() => {
     if (token) {
       getProfile();
@@ -300,6 +451,7 @@ const registerUser = async (userData) => {
         addExpense,
         getExpenses,
         deleteExpense,
+        setError,
         clearError,
         totalIncome,
         totalExpenses,
@@ -312,4 +464,5 @@ const registerUser = async (userData) => {
 };
 
 export const useGlobalContext = () => useContext(GlobalContext);
+
 
