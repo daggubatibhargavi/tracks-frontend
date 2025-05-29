@@ -53,7 +53,6 @@ import { useGlobalContext } from "../context/GlobalContext";
 import { useNavigate, Link } from "react-router-dom";
 import "./Signup.css";
 
-
 const Signup = () => {
   const { registerUser, error, clearError } = useGlobalContext();
   const [username, setUsername] = useState("");
@@ -64,13 +63,15 @@ const Signup = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await registerUser({ username, email, password });
-      navigate("/Login");
-      setUsername("");
-      setEmail("");
-      setPassword("");
+      const success = await registerUser({ username, email, password });
+      if (success) {
+        navigate("/login");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+      }
     } catch (err) {
-      // Handled in context
+      // Error handled inside context
     }
   };
 
@@ -112,3 +113,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
