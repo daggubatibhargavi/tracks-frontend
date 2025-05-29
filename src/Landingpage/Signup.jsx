@@ -48,10 +48,75 @@
 
 
 // src/pages/Signup.js
+// import React, { useState, useEffect } from "react";
+// import { useGlobalContext } from "../context/GlobalContext";
+// import { useNavigate, Link } from "react-router-dom";
+// import "./Signup.css";
+
+// const Signup = () => {
+//   const { registerUser, error, clearError } = useGlobalContext();
+//   const [username, setUsername] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const navigate = useNavigate();
+
+//   const handleRegister = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const success = await registerUser({ username, email, password });
+//       if (success) {
+//         navigate("/login");
+//         setUsername("");
+//         setEmail("");
+//         setPassword("");
+//       }
+//     } catch (err) {
+//       // Error handled inside context
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (username || email || password) clearError();
+//   }, [username, email, password, clearError]);
+
+//   return (
+//     <form onSubmit={handleRegister}>
+//       <h2>Signup</h2>
+//       {error && <p style={{ color: "red" }}>{error}</p>}
+//       <input
+//         type="text"
+//         placeholder="Username"
+//         value={username}
+//         onChange={(e) => setUsername(e.target.value)}
+//         required
+//       />
+//       <input
+//         type="email"
+//         placeholder="Email"
+//         value={email}
+//         onChange={(e) => setEmail(e.target.value)}
+//         required
+//       />
+//       <input
+//         type="password"
+//         placeholder="Password"
+//         value={password}
+//         onChange={(e) => setPassword(e.target.value)}
+//         required
+//       />
+//       <button type="submit">Register</button>
+//       <p>
+//         Already have an account? <Link to="/login">Login</Link>
+//       </p>
+//     </form>
+//   );
+// };
+
+// export default Signup;
 import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import { useNavigate, Link } from "react-router-dom";
-import "./Signup.css";
+import "./Signup.css"; // Optional
 
 const Signup = () => {
   const { registerUser, error, clearError } = useGlobalContext();
@@ -63,15 +128,10 @@ const Signup = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const success = await registerUser({ username, email, password });
-      if (success) {
-        navigate("/login");
-        setUsername("");
-        setEmail("");
-        setPassword("");
-      }
+      await registerUser({ username, email, password });
+      navigate("/dashboard");
     } catch (err) {
-      // Error handled inside context
+      // Error handled in context
     }
   };
 
