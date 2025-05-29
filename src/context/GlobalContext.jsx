@@ -170,18 +170,23 @@ export const GlobalProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState(null);
 
-  const registerUser = async (userData) => {
-    try {
-      const res = await axiosInstance.post("/register", userData);
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-      setToken(token);
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-      return false;
-    }
-  };
+  // REGISTER
+const registerUser = async (userData) => {
+  try {
+    const res = await axiosInstance.post("/register", userData);
+    const token = res.data.token;
+
+    localStorage.setItem("token", token);
+    setToken(token);
+    await getProfile(); // optional: fetch profile immediately
+
+    return true; // ✅ success flag
+  } catch (err) {
+    setError(err.response?.data?.message || "Registration failed");
+    return false; // ✅ failure flag
+  }
+};
+
 
   const loginUser = async (userData) => {
     try {
