@@ -17,19 +17,42 @@
 // export default axiosInstance;
 
 // src/axios.js
+// import axios from "axios";
+
+// const axiosInstance = axios.create({
+//   baseURL: "https://tracks-backend-uorz.onrender.com/api/v1", // or your localhost
+// });
+
+// axiosInstance.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("token");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
+// export default axiosInstance;
 import axios from "axios";
 
+// Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://tracks-backend-uorz.onrender.com/api/v1", // or your localhost
+   baseURL: "https://tracks-backend-uorz.onrender.com/api/v1",// ✅ update this if your backend runs elsewhere
 });
 
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// ✅ Automatically attach token from localStorage to every request
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default axiosInstance;
+
 
