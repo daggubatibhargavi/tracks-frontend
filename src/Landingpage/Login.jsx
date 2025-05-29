@@ -110,10 +110,60 @@
 
 // export default Login;
 // src/pages/Login.js
+// import React, { useState, useEffect } from "react";
+// import { useGlobalContext } from "../context/GlobalContext";
+// import { useNavigate, Link } from "react-router-dom";
+// import "./Login.css";
+
+// const Login = () => {
+//   const { loginUser, error, clearError } = useGlobalContext();
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const navigate = useNavigate();
+
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     const success = await loginUser({ email, password });
+//     if (success) {
+//       navigate("/dashboard"); // ✅ redirect after token is set
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (email || password) clearError();
+//   }, [email, password]);
+
+//   return (
+//     <form onSubmit={handleLogin}>
+//       <h2>Login</h2>
+//       {error && <p style={{ color: "red" }}>{error}</p>}
+//       <input
+//         type="email"
+//         placeholder="Email"
+//         value={email}
+//         onChange={(e) => setEmail(e.target.value)}
+//         required
+//       />
+//       <input
+//         type="password"
+//         placeholder="Password"
+//         value={password}
+//         onChange={(e) => setPassword(e.target.value)}
+//         required
+//       />
+//       <button type="submit">Login</button>
+//       <p>
+//         Don't have an account? <Link to="/signup">Sign up</Link>
+//       </p>
+//     </form>
+//   );
+// };
+
+// export default Login;
 import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import { useNavigate, Link } from "react-router-dom";
-import "./Login.css";
+import "./Login.css"; // Optional, style as needed
 
 const Login = () => {
   const { loginUser, error, clearError } = useGlobalContext();
@@ -123,15 +173,17 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const success = await loginUser({ email, password });
-    if (success) {
-      navigate("/dashboard"); // ✅ redirect after token is set
+    try {
+      await loginUser({ email, password });
+      navigate("/dashboard");
+    } catch (err) {
+      // Error handled in context
     }
   };
 
   useEffect(() => {
     if (email || password) clearError();
-  }, [email, password]);
+  }, [email, password, clearError]);
 
   return (
     <form onSubmit={handleLogin}>
@@ -153,11 +205,12 @@ const Login = () => {
       />
       <button type="submit">Login</button>
       <p>
-        Don't have an account? <Link to="/signup">Sign up</Link>
+        Don't have an account? <Link to="/signup">Signup</Link>
       </p>
     </form>
   );
 };
 
 export default Login;
+
 
