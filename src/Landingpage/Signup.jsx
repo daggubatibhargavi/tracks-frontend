@@ -126,14 +126,14 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await registerUser({ username, email, password });
-      navigate("/dashboard");
-    } catch (err) {
-      // Error handled in context
-    }
-  };
+  e.preventDefault();
+  try {
+    await registerUser({ username, email, password });
+    navigate("/login"); // Go to login instead of dashboard
+  } catch (err) {
+    // Error handled in context
+  }
+};
 
   useEffect(() => {
     if (username || email || password) clearError();
