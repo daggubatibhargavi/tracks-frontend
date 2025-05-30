@@ -339,16 +339,17 @@ export const GlobalProvider = ({ children }) => {
 
   // ✅ LOGIN
   const loginUser = async (userData) => {
-    try {
-      const res = await axiosInstance.post("/login", userData);
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-      setToken(token);
-      await getProfile();
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    }
-  };
+  try {
+    const res = await axiosInstance.post("/login", userData);
+    localStorage.setItem("token", res.data.token);
+    setToken(res.data.token);
+    await getProfile();
+    return true; // ✅ Login successful
+  } catch (err) {
+    setError(err.response?.data?.message || "Login failed");
+    return false; // ❌ Login failed
+  }
+};
 
   // ✅ GET PROFILE
   const getProfile = async () => {
