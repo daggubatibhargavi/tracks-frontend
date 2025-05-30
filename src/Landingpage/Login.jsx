@@ -162,22 +162,30 @@
 // export default Login;
 import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
-import { useNavigate, Link } from "react-router-dom";
-import "./Login.css"; // Optional, style as needed
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import "./Login.css";
 
 const Login = () => {
   const { loginUser, error, clearError } = useGlobalContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log(location);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      await loginUser({ email, password });
+    const success = await loginUser({ email, password });
+
+    if (success) {
       navigate("/dashboard");
-    } catch (err) {
-      // Error handled in context
+      setEmail("");
+      setPassword("");
+    } else {
+      alert("Invalid email or password. Please try again."); // ✅ Alert on failure
     }
   };
 
@@ -205,7 +213,7 @@ const Login = () => {
       />
       <button type="submit">Login</button>
       <p>
-        Don't have an account? <Link to="/signup">Signup</Link>
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
     </form>
   );
